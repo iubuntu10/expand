@@ -1,0 +1,204 @@
+<mvc:View controllerName="crystal.rtinv.controller.TransferOrderLst"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<Page class="pageLevel1">
+		<customHeader>
+			<core:Fragment fragmentName="crystal.rtinv.view.ModuleHeader"
+				type="XML" />
+		</customHeader>		
+		<subHeader>
+			<Bar>
+				<contentLeft>									
+						<Label text="{i18n>lblStorageUnit}" design="Bold"></Label>
+						<Input id="storageUnit" placeholder="Storage Unit (Optional)" width="auto"
+							liveChange="onChangeSU" />
+						<Input id="TONo" placeholder="TO Number (Optional)" visible="false" />					
+				</contentLeft>
+				<contentMiddle>
+					<Label text="{i18n>lblTOType}" design="Bold"></Label>
+					<Select id="comboBox" items="{comboModel>/mTypes}" change="onSelectionChanged">
+						<core:ListItem key="{comboModel>key}" text="{comboModel>wmType}" additionalText="{comboModel>imType}" />
+					</Select>					
+				</contentMiddle>
+				<contentRight>				
+					<Button press="onSearch" text="Search" type="Accept" />
+				</contentRight>
+			</Bar>
+		</subHeader>
+		
+
+		<Panel>
+			<Table id="resultTable" class="sapUiResponsiveMargin" width="auto"
+				visible="false" growing="true" growingThreshold="50"
+				growingScrollToLoad="true" items="{rtInvModel>/TOEntitySet}">
+				<headerToolbar>
+					<Toolbar>
+						<Title id="transferOrder" text="{i18n>tranferOrderTableTitle}" />
+						<ToolbarSpacer />
+
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>lblRaiseTime}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblOrder}"></Text>
+					</Column>
+					<!--Column> <Text text="{i18n>lblItem}"></Text> </Column -->
+					<Column>
+						<Text text="{i18n>lblMaterial}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblStorageUnit}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblDestSU}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblSourceBin}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblTargetBin}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblMoveType}"></Text>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" press="onNav">
+						<cells>
+							<Text
+								text="{
+							parts: [
+							{
+								path: 'rtInvModel>RaiseDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {
+									pattern: 'MMM dd',
+									UTC: true
+								}
+							},
+							{
+								path: 'rtInvModel>RaiseTime',
+								type: 'sap.ui.model.odata.type.Time',
+								formatOptions: {
+									pattern: 'HH:mm'
+								}
+							}]
+						}"></Text>
+							<!--ObjectIdentifier title="{ path: 'rtInvModel>TransOrd', type: 'sap.ui.model.odata.type.String', 
+								constraints: { isDigitSequence: true } }"></ObjectIdentifier> <ObjectIdentifier 
+								title="{rtInvModel>ToItem}"></ObjectIdentifier -->
+							<ObjectIdentifier
+								title="{
+							parts: [{
+								path: 'rtInvModel>TransOrd',
+								type: 'sap.ui.model.odata.type.String',
+								constraints: {
+									isDigitSequence: true
+								}
+							},{
+								path: 'rtInvModel>ToItem',
+								type: 'sap.ui.model.odata.type.String',
+								constraints: {
+									isDigitSequence: true
+								}
+							}],
+							formatter: '.formatter.trnsfOrdItem'
+						}"></ObjectIdentifier>
+							<Text text="{rtInvModel>Material}"></Text>
+							<Text text="{rtInvModel>StorageUnit}"></Text>
+							<Text text="{rtInvModel>DestSU}" />
+							<Text text="{rtInvModel>SourceBin}"></Text>
+							<Text text="{rtInvModel>TargetBin}"></Text>
+							<Text text="{rtInvModel>MoveType}"></Text>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+
+			<Table id="resultTableBySU" class="sapUiResponsiveMargin"
+				width="auto" visible="false" growing="true" growingThreshold="50"
+				growingScrollToLoad="true" items="{rtInvModel>/TOEntitySet}">
+				<headerToolbar>
+					<Toolbar>
+						<Input id="actualTargetBin" placeholder="Target Bin location"></Input>
+						<Label />
+						<Text id="raisedBy" />
+						<ToolbarSpacer />
+						<Button id="btnConfirm" text="Confirm" press="confirmTOBySU"
+							type="Reject"></Button>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>lblItem}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblMaterial}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblBatch}" />
+					</Column>
+					<Column>
+						<Text text="{i18n>lblRequiredQty}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblAvlblQty}"></Text>
+					</Column>
+					<Column width="80px">
+						<Text text="{i18n>lblAcutalQty}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblTargetBin}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblStorageUnit}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblDestSU}"></Text>
+					</Column>
+					<Column>
+						<Text text="{i18n>lblSourceBin}"></Text>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem vAlign="Middle">
+						<cells>
+							<ObjectIdentifier
+								title="{
+							parts: [{
+								path: 'rtInvModel>TransOrd',
+								type: 'sap.ui.model.odata.type.String',
+								constraints: {
+									isDigitSequence: true
+								}
+							},{
+								path: 'rtInvModel>ToItem',
+								type: 'sap.ui.model.odata.type.String',
+								constraints: {
+									isDigitSequence: true
+								}
+							}],
+							formatter: '.formatter.trnsfOrdItem'
+						}"></ObjectIdentifier>
+							<Text text="{rtInvModel>Material}"></Text>
+							<Text text="{rtInvModel>Batch}"></Text>
+							<Text id="qty"
+								text="{parts: [{path: 'rtInvModel>Quantity'}, {path: 'rtInvModel>Uom'}]}" />
+							<Text id="avlblQty"
+								text="{parts: [{path: 'rtInvModel>AvailableQty'}, {path: 'rtInvModel>Uom'}]}" />
+							<Input id="actualQty" editable="true" placeholder="{rtInvModel>Quantity}" />
+							<Text text="{rtInvModel>TargetBin}"></Text>
+							<Text text="{rtInvModel>StorageUnit}"></Text>
+							<Text text="{rtInvModel>DestSU}" />
+							<Text text="{rtInvModel>SourceBin}"></Text>
+						</cells>
+					</ColumnListItem>
+				</items>
+
+			</Table>
+		</Panel>
+	</Page>
+</mvc:View>
